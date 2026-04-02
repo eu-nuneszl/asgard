@@ -1,0 +1,63 @@
+// ====== Pinos Ponte H ======
+#define IN1 7   // PWM
+#define IN2 6   // PWM
+#define IN3 5   // PWM
+#define IN4 4  // PWM
+
+#define VELOCIDADE 150
+
+// ====== Pinos Sensores ======
+#define S_ESQ 17
+#define S_DIR 15
+
+void setup() {
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+
+  pinMode(S_ESQ, INPUT);
+  pinMode(S_DIR, INPUT);
+}
+
+void loop() {
+  int esq = digitalRead(S_ESQ);
+  int dir = digitalRead(S_DIR);
+
+  // 0 = linha preta
+
+  if (esq == 0 && dir == 0) {
+    frente();    // Ambos sensores na linha
+  }
+  else if (esq == 0 && dir == 1) {
+    esquerda();  // Apenas esquerdo na linha
+  }
+  else if (esq == 1 && dir == 0) {
+    direita();   // Apenas direito na linha
+  }
+  else {
+    parar();     // Perdeu a linha
+  }
+}
+
+// ====== Movimentos ======
+
+void frente() {
+  analogWrite(IN1, VELOCIDADE); analogWrite(IN2, 0);
+  analogWrite(IN3, VELOCIDADE); analogWrite(IN4, 0);
+}
+
+void esquerda() {
+  analogWrite(IN1, 0); analogWrite(IN2, VELOCIDADE);
+  analogWrite(IN3, VELOCIDADE); analogWrite(IN4, 0);
+}
+
+void direita() {
+  analogWrite(IN1, VELOCIDADE); analogWrite(IN2, 0);
+  analogWrite(IN3, 0); analogWrite(IN4, VELOCIDADE);
+}
+
+void parar() {
+  analogWrite(IN1, 0); analogWrite(IN2, 0);
+  analogWrite(IN3, 0); analogWrite(IN4, 0);
+}
