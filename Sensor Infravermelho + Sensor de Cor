@@ -1,0 +1,154 @@
+#include "Adafruit_TCS34725softi2c.h"
+
+// ====== SENSORES DE COR ======
+#define SDA_ESQ 20
+#define SCL_ESQ 21
+
+#define SDA_DIR 13
+#define SCL_DIR 12
+
+Adafruit_TCS34725softi2c corEsq = Adafruit_TCS34725softi2c(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X, SDA_ESQ, SCL_ESQ);
+Adafruit_TCS34725softi2c corDir = Adafruit_TCS34725softi2c(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X, SDA_DIR, SCL_DIR);
+
+float hue, saturation, brightness;
+
+// ====== PONTE H ======
+#define IN1 7
+#define IN2 6
+#define IN3 5
+#define IN4 4
+
+#define VELOCIDADE 150
+
+// ====== LINHA ======
+#define S_ESQ 17
+#define S_DIR 15
+
+void setup() {
+  Serial.begin(9600);
+
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+
+  pinMode(S_ESQ, INPUT);
+  pinMode(S_DIR, INPUT);
+
+  if (!corEsq.begin()) {
+    Serial.println("Erro sensor cor ESQ");
+    while (1);
+  }
+
+  if (!corDir.begin()) {
+    Serial.println("Erro sensor cor DIR");
+    while (1);
+  }
+}
+
+void loop() {
+  int esq = digitalRead(S_ESQ);
+  int dir = digitalRead(S_DIR);
+
+  // ====== INTERSEÇÃO ======
+  if (esq == 0 && dir == 0) {
+
+    String corE = lerCor(corEsq);
+    String corD = lerCor(corDir);
+
+    Serial.print("E: "); Serial.print(corE);
+    Serial.print(" | D: "); Serial.println(corD);
+
+    if (corE == "verde") {
+      esquerda();
+      delay(400);
+    }
+    else if (corD == "verde") {
+      direita();
+      delay(400);
+    }
+    else {
+      frente();
+    }
+  }
+
+  // ====== NORMAL ======
+  else if (esq == 0 && dir == 1) {
+    esquerda();
+  }
+  else if (esq == 1 && dir == 0) {
+    direita();
+  }
+  else {
+    parar();
+  }
+}
+
+// ====== FUNÇÃO COR ======
+
+String lerCor(Adafruit_TCS34725softi2c &sensor) {
+  int r, g, b, c;
+
+  sensor.setInterrupt(false);
+  delay(60);
+  sensor.getRawData(&r, &g, &b, &c);
+  sensor.setInterrupt(true);
+
+  rgbToHSB(r, g, b);
+
+  if (saturation < 0.1) return "nenhuma";
+
+  if (hue >= 75 && hue <= 150) return "verde";
+
+  return "outra";
+}
+
+// ====== CONVERSÃO ======
+
+void rgbToHSB(int r, int g, int b) {
+  float R = r;
+  float G = g;
+  float B = b;
+
+  float max_val = max(R, max(G, B));
+  float min_val = min(R, min(G, B));
+  float delta = max_val - min_val;
+
+  brightness = max_val;
+
+  if (max_val == 0) saturation = 0;
+  else saturation = delta / max_val;
+
+  if (delta == 0) {
+    hue = 0;
+    return;
+  }
+
+  if (max_val == R) hue = 60 * fmod(((G - B) / delta), 6);
+  else if (max_val == G) hue = 60 * (((B - R) / delta) + 2);
+  else hue = 60 * (((R - G) / delta) + 4);
+
+  if (hue < 0) hue += 360;
+}
+
+// ====== MOVIMENTO ======
+
+void frente() {
+  analogWrite(IN1, VELOCIDADE); analogWrite(IN2, 0);
+  analogWrite(IN3, VELOCIDADE); analogWrite(IN4, 0);
+}
+
+void esquerda() {
+  analogWrite(IN1, 0); analogWrite(IN2, VELOCIDADE);
+  analogWrite(IN3, VELOCIDADE); analogWrite(IN4, 0);
+}
+
+void direita() {
+  analogWrite(IN1, VELOCIDADE); analogWrite(IN2, 0);
+  analogWrite(IN3, 0); analogWrite(IN4, VELOCIDADE);
+}
+
+void parar() {
+  analogWrite(IN1, 0); analogWrite(IN2, 0);
+  analogWrite(IN3, 0); analogWrite(IN4, 0);
+}
