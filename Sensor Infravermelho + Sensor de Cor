@@ -4,8 +4,8 @@
 #define SDA_ESQ 20
 #define SCL_ESQ 21
 
-#define SDA_DIR 13
-#define SCL_DIR 12
+#define SDA_DIR 20
+#define SCL_DIR 21
 
 Adafruit_TCS34725softi2c corEsq = Adafruit_TCS34725softi2c(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X, SDA_ESQ, SCL_ESQ);
 Adafruit_TCS34725softi2c corDir = Adafruit_TCS34725softi2c(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X, SDA_DIR, SCL_DIR);
@@ -21,7 +21,7 @@ float hue, saturation, brightness;
 #define VELOCIDADE 150
 
 // ====== LINHA ======
-#define S_ESQ 17
+#define S_ESQ 14
 #define S_DIR 15
 
 void setup() {
