@@ -7,7 +7,7 @@
 #define VELOCIDADE 150
 
 // ====== Pinos Sensores ======
-#define S_ESQ 17
+#define S_ESQ 14
 #define S_DIR 15
 
 void setup() {
