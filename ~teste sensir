@@ -1,0 +1,36 @@
+// Definição dos pinos digitais para os 4 sensores
+const int sensorPin1 = 45;
+const int sensorPin2 = 14;
+const int sensorPin3 = 15;
+const int sensorPin4 = 44;
+
+void setup() {
+  // Inicia a comunicação serial
+  Serial.begin(9600);
+
+  // Configura os pinos como entrada
+  pinMode(sensorPin1, INPUT);
+  pinMode(sensorPin2, INPUT);
+  pinMode(sensorPin3, INPUT);
+  pinMode(sensorPin4, INPUT);
+
+  Serial.println("--- Teste de Refletância (4 Sensores) ---");
+  Serial.println("S1 | S2 | S3 | S4");
+}
+
+void loop() {
+  // Leitura digital de cada sensor
+  int s1 = digitalRead(sensorPin1);
+  int s2 = digitalRead(sensorPin2);
+  int s3 = digitalRead(sensorPin3);
+  int s4 = digitalRead(sensorPin4);
+
+  // Exibe os valores formatados
+  Serial.print(s1); Serial.print("  | ");
+  Serial.print(s2); Serial.print("  | ");
+  Serial.print(s3); Serial.print("  | ");
+  Serial.println(s4);
+
+  // Ajuste o delay conforme a necessidade de velocidade do seu projeto
+  delay(100); 
+}
