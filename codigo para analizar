@@ -7,18 +7,18 @@
 #define TCA_ADDR 0x70
 
 // Sensores de linha (Pinos digitais padrão)
-#define S1 2
-#define S2 3
-#define S3 4
-#define S4 5
+#define S1 45
+#define S2 14
+#define S3 15
+#define S4 44
 
 // Motores (Conectados em pinos PWM do Mega)
-#define IN1 6
-#define IN2 7
-#define IN3 8
-#define IN4 9
-#define ENA 10 // PWM Motor Esquerdo
-#define ENB 11 // PWM Motor Direito
+#define IN1 7
+#define IN2 6
+#define IN3 5
+#define IN4 4
+#define ENA 8 // PWM Motor Esquerdo
+#define ENB 9 // PWM Motor Direito
 
 // ===== PARÂMETROS DE CONTROLE =====
 int baseSpeed = 130; 
