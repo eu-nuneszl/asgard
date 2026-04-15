@@ -1,0 +1,83 @@
+// ====== Pinos Ponte H ======
+#define IN1 7
+#define IN2 6
+#define IN3 5
+#define IN4 4
+
+#define VELOCIDADE 150
+
+// ====== Sensores ======
+#define S_ESQC 15
+#define S_DIRC 14
+#define S_ESQF 45
+#define S_DIRF 44
+
+void setup() {
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+
+  pinMode(S_ESQC, INPUT);
+  pinMode(S_DIRC, INPUT);
+  pinMode(S_ESQF, INPUT);
+  pinMode(S_DIRF, INPUT);
+}
+
+void loop() {
+  int esqC = digitalRead(S_ESQC);
+  int dirC = digitalRead(S_DIRC);
+  int esqF = digitalRead(S_ESQF);
+  int dirF = digitalRead(S_DIRF);
+
+  // 1 = linha preta
+
+  // Linha bem centralizada
+  if (esqC == 1 && dirC == 1) {
+    frente();
+  }
+
+  // Linha puxando para esquerda
+  else if (esqC == 0 || esqF == 1) {
+    frente();
+  }
+
+  // Linha puxando para direita
+  else if (dirC == 0 || dirF == 1) {
+    frente();
+  }
+
+  // Linha puxando para esquerda
+  else if (esqC == 0 || esqF == 0) {
+    esquerda();
+  }
+
+  // Linha puxando para direita
+  else if (dirC == 1 || dirF == 1) {
+    direita();
+  }
+  // Perdeu a linha
+else if (esqC == 1 && esqF == 1 && dirF == 1 && dirC == 1) {
+  parar();
+}
+// ====== Movimentos ======
+}
+void frente() {
+  analogWrite(IN1, VELOCIDADE); analogWrite(IN2, 0);
+  analogWrite(IN3, VELOCIDADE); analogWrite(IN4, 0);
+}
+
+void esquerda() {
+  analogWrite(IN1, 0); analogWrite(IN2, VELOCIDADE);
+  analogWrite(IN3, VELOCIDADE); analogWrite(IN4, 0);
+}
+
+void direita() {
+  analogWrite(IN1, VELOCIDADE); analogWrite(IN2, 0);
+  analogWrite(IN3, 0); analogWrite(IN4, VELOCIDADE);
+}
+
+void parar() {
+  analogWrite(IN1, 0); analogWrite(IN2, 0);
+  analogWrite(IN3, 0); analogWrite(IN4, 0);
+}
