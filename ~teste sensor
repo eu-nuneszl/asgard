@@ -1,8 +1,8 @@
 // Definição dos pinos digitais para os 4 sensores
-const int sensorPin1 = 45;
-const int sensorPin2 = 14;
-const int sensorPin3 = 15;
-const int sensorPin4 = 44;
+const int sensorPin1 = 15;
+const int sensorPin2 = 16;
+const int sensorPin3 = 17;
+const int sensorPin4 = 14;
 
 void setup() {
   // Inicia a comunicação serial
