@@ -1,0 +1,115 @@
+// ====== Pinos Ponte H ======
+#define IN1 7  
+#define IN2 6  
+#define IN3 5  
+#define IN4 4  
+
+#define VELOCIDADE 180
+
+// ====== Pinos Sensores (0 = Branco, 1 = Preto) ======
+#define S_ESQ 14
+#define S_DIR 17
+
+int ladoEncontrado = 0; 
+
+void setup() {
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+
+  pinMode(S_ESQ, INPUT);
+  pinMode(S_DIR, INPUT);
+}
+
+void loop() {
+  int esq = digitalRead(S_ESQ);
+  int dir = digitalRead(S_DIR);
+
+  if (esq == 1 && dir == 1) {
+    parar();
+    delay(2000);          // 1. Espera 2 segundos
+    
+    re();
+    delay(200);           // 2. Volta para trás 
+    parar();
+    delay(200);
+    
+    avancarUmPouco();     // 3. Avança um pouco
+    procurarLinha();      // 4. Faz a varredura de 150º
+  } 
+  else if (esq == 1 && dir == 0) {
+    direita();
+  } 
+  else if (esq == 0 && dir == 1) {
+    esquerda();
+  } 
+  else {
+    frente();
+  }
+}
+
+// ====== Funções de Movimento ======
+
+void frente() {
+  analogWrite(IN1, VELOCIDADE); analogWrite(IN2, 0);
+  analogWrite(IN3, VELOCIDADE); analogWrite(IN4, 0);
+}
+
+void re() {
+  analogWrite(IN1, 0);          analogWrite(IN2, VELOCIDADE);
+  analogWrite(IN3, 0);          analogWrite(IN4, VELOCIDADE);
+}
+
+void parar() {
+  analogWrite(IN1, 0); analogWrite(IN2, 0);
+  analogWrite(IN3, 0); analogWrite(IN4, 0);
+}
+
+void esquerda() {
+  analogWrite(IN1, 0);          analogWrite(IN2, VELOCIDADE);
+  analogWrite(IN3, VELOCIDADE); analogWrite(IN4, 0);
+}
+
+void direita() {
+  analogWrite(IN1, VELOCIDADE); analogWrite(IN2, 0);
+  analogWrite(IN3, 0);          analogWrite(IN4, VELOCIDADE);
+}
+
+// ====== Lógica de Busca Ajustada para 150º ======
+
+void avancarUmPouco() {
+  frente();
+  delay(250); 
+  parar();
+  delay(100);
+}
+
+void procurarLinha() {
+  ladoEncontrado = 0; 
+
+  // 1. Gira 150º para a Esquerda (Aumentado para 1000ms)
+  unsigned long tempoEsq = millis();
+  esquerda(); 
+  while (millis() - tempoEsq < 1000) { 
+    if (digitalRead(S_ESQ) == 1 || digitalRead(S_DIR) == 1) {
+      ladoEncontrado = 1; 
+      parar();
+      return; 
+    }
+  }
+  parar();
+  delay(200);
+
+  // 2. Se não achou, gira para a Direita (Dobro do tempo: 2000ms)
+  unsigned long tempoDir = millis();
+  direita();
+  while (millis() - tempoDir < 2000) { 
+    if (digitalRead(S_ESQ) == 1 || digitalRead(S_DIR) == 1) {
+      ladoEncontrado = 2; 
+      parar();
+      return;
+    }
+  }
+  parar();
+}
